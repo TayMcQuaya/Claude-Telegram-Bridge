@@ -2,6 +2,19 @@
 
 Control Claude Code remotely via Telegram! Send prompts, receive responses, and approve permission requests - all from your phone.
 
+## How It Works
+
+This bridge connects **two environments**:
+
+| Component | Runs In | Purpose |
+|-----------|---------|---------|
+| `telegram_bridge.py` | **Windows/macOS** (PowerShell/Terminal) | Polls Telegram, types into Claude Code |
+| Claude Code + Hooks | **Linux/WSL** | Runs Claude, sends responses to Telegram |
+
+**On Windows**: Claude Code runs inside WSL (Windows Subsystem for Linux), while the bridge runs in regular Windows PowerShell. They communicate through a shared `data/` folder.
+
+**On Linux/macOS**: Both run in the same environment, making setup simpler.
+
 ## Features
 
 - 📱 **Send prompts from Telegram** → Types directly into Claude Code
