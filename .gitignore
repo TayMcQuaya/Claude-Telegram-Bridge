@@ -1,0 +1,31 @@
+# Configuration files with secrets
+config.json
+hooks/config.json
+
+# Data directory (state files, but keep structure)
+data/*
+!data/.gitkeep
+data/callbacks/*
+!data/callbacks/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
