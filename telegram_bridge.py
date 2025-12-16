@@ -108,18 +108,33 @@ def type_to_claude(text):
 
     print("Sent!")
 
+def clear_old_updates(config):
+    """Clear any pending updates from previous sessions"""
+    url = f"https://api.telegram.org/bot{config['telegram_bot_token']}/getUpdates"
+    try:
+        response = requests.get(url, params={"offset": -1, "limit": 1}, timeout=10)
+        updates = response.json().get("result", [])
+        if updates:
+            return updates[-1]["update_id"] + 1
+    except:
+        pass
+    return 0
+
 def main():
     config = load_config()
-    offset = 0
 
     os.makedirs(CALLBACK_DIR, exist_ok=True)
-
-    with open(BRIDGE_RUNNING_FILE, 'w') as f:
-        f.write("1")
 
     print("=" * 50)
     print("Telegram Bridge for Claude Code")
     print("=" * 50)
+    print("Clearing old messages...")
+    offset = clear_old_updates(config)
+    print(f"Ready! (offset: {offset})")
+
+    with open(BRIDGE_RUNNING_FILE, 'w') as f:
+        f.write("1")
+
     print("Messages from Telegram will be typed into Claude Code.")
     print("Make sure the Claude Code terminal is focused!")
     print("=" * 50)

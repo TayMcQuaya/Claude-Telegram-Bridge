@@ -194,6 +194,7 @@ Configure which tools are automatically approved or denied in `config.json`:
 - **Plan mode sync** - If you toggle plan mode using the keyboard (Shift+Tab twice) instead of `/plan`, the Telegram state won't know. Use `/plan` command to stay in sync
 - **One chat, multiple projects** - The same Telegram chat controls whichever Claude Code terminal is currently focused. Switch projects by focusing a different terminal
 - **No offline queue** - Messages sent while bridge is stopped are lost
+- **Hooks tied to bridge** - Claude's responses and permission requests only go to Telegram when the bridge is running
 
 ## Troubleshooting
 
