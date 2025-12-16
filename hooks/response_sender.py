@@ -9,9 +9,22 @@ Install: Copy to ~/.claude/hooks/ and register in ~/.claude/settings.json
 import json
 import sys
 import os
+import re
 import requests
 
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.json")
+
+def markdown_to_html(text):
+    """Convert markdown formatting to HTML for Telegram"""
+    text = re.sub(r'&', '&amp;', text)
+    text = re.sub(r'<', '&lt;', text)
+    text = re.sub(r'>', '&gt;', text)
+    text = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', text)
+    text = re.sub(r'__(.+?)__', r'<b>\1</b>', text)
+    text = re.sub(r'\*(.+?)\*', r'<i>\1</i>', text)
+    text = re.sub(r'_(.+?)_', r'<i>\1</i>', text)
+    text = re.sub(r'`(.+?)`', r'<code>\1</code>', text)
+    return text
 
 def get_bridge_data_dir():
     """Get the bridge data directory from config"""
@@ -52,10 +65,13 @@ def send_telegram(config, text):
     if len(text) > 4000:
         text = text[:4000] + "\n\n... (truncated)"
 
+    text = markdown_to_html(text)
+
     try:
         requests.post(url, json={
             "chat_id": config["telegram_chat_id"],
-            "text": text
+            "text": text,
+            "parse_mode": "HTML"
         }, timeout=10)
     except:
         pass
