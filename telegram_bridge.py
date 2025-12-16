@@ -23,6 +23,7 @@ CONFIG_PATH = os.path.join(SCRIPT_DIR, "config.json")
 CALLBACK_DIR = os.path.join(SCRIPT_DIR, "data", "callbacks")
 THINKING_FILE = os.path.join(SCRIPT_DIR, "data", "thinking_msg_id.txt")
 PLAN_MODE_FILE = os.path.join(SCRIPT_DIR, "data", "plan_mode_state.txt")
+BRIDGE_RUNNING_FILE = os.path.join(SCRIPT_DIR, "data", "bridge_running.txt")
 
 def load_config():
     if not os.path.exists(CONFIG_PATH):
@@ -113,6 +114,9 @@ def main():
 
     os.makedirs(CALLBACK_DIR, exist_ok=True)
 
+    with open(BRIDGE_RUNNING_FILE, 'w') as f:
+        f.write("1")
+
     print("=" * 50)
     print("Telegram Bridge for Claude Code")
     print("=" * 50)
@@ -120,7 +124,7 @@ def main():
     print("Make sure the Claude Code terminal is focused!")
     print("=" * 50)
 
-    send_telegram(config, "🌉 Bridge started!\n\nCommands:\n/plan - Toggle plan mode\n/stop - Stop bridge")
+    send_telegram(config, "🌉 Bridge started!\n\nCommands:\n/help - Show help\n/plan - Toggle plan mode\n/stop - Stop bridge")
 
     while True:
         try:
@@ -150,6 +154,8 @@ def main():
                 text = msg["text"]
 
                 if text == "/stop":
+                    if os.path.exists(BRIDGE_RUNNING_FILE):
+                        os.remove(BRIDGE_RUNNING_FILE)
                     send_telegram(config, "🛑 Bridge stopped")
                     print("Stopping bridge...")
                     return
@@ -180,6 +186,31 @@ def main():
                     print(status)
                     continue
 
+                if text == "/help":
+                    help_text = """🤖 <b>Claude Telegram Bridge</b>
+
+<b>Commands:</b>
+/help - Show this help
+/plan - Toggle plan mode on/off
+/stop - Stop the bridge
+
+<b>How to use:</b>
+• Send any text → types into Claude Code
+• Tap Allow/Deny buttons → responds to permission requests
+
+<b>Limitations:</b>
+• Claude Code terminal must be focused
+• Plan mode may desync if toggled via keyboard
+• One chat controls whichever terminal is focused"""
+
+                    url = f"https://api.telegram.org/bot{config['telegram_bot_token']}/sendMessage"
+                    requests.post(url, json={
+                        "chat_id": config["telegram_chat_id"],
+                        "text": help_text,
+                        "parse_mode": "HTML"
+                    }, timeout=10)
+                    continue
+
                 if text.startswith("/"):
                     continue
 
@@ -189,6 +220,8 @@ def main():
             time.sleep(0.5)
 
         except KeyboardInterrupt:
+            if os.path.exists(BRIDGE_RUNNING_FILE):
+                os.remove(BRIDGE_RUNNING_FILE)
             print("\nStopping bridge...")
             send_telegram(config, "🛑 Bridge stopped (Ctrl+C)")
             break

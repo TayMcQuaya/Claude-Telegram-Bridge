@@ -164,6 +164,7 @@ mkdir -p data
 
 | Command | Description |
 |---------|-------------|
+| `/help` | Show help and limitations |
 | `/plan` | Toggle Plan Mode on/off |
 | `/stop` | Stop the bridge |
 | (any text) | Send as prompt to Claude |
@@ -186,6 +187,13 @@ Configure which tools are automatically approved or denied in `config.json`:
   "auto_deny": ["Bash"]
 }
 ```
+
+## Limitations
+
+- **Window focus required** - The Claude Code terminal must be focused for typing to work
+- **Plan mode sync** - If you toggle plan mode using the keyboard (Shift+Tab twice) instead of `/plan`, the Telegram state won't know. Use `/plan` command to stay in sync
+- **One chat, multiple projects** - The same Telegram chat controls whichever Claude Code terminal is currently focused. Switch projects by focusing a different terminal
+- **No offline queue** - Messages sent while bridge is stopped are lost
 
 ## Troubleshooting
 

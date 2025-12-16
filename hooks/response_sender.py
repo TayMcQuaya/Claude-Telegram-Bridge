@@ -34,6 +34,11 @@ def get_bridge_data_dir():
 def get_thinking_file():
     return os.path.join(get_bridge_data_dir(), "thinking_msg_id.txt")
 
+def is_bridge_running():
+    """Check if the bridge is currently running"""
+    bridge_file = os.path.join(get_bridge_data_dir(), "bridge_running.txt")
+    return os.path.exists(bridge_file)
+
 def load_config():
     if not os.path.exists(CONFIG_PATH):
         sys.exit(0)
@@ -112,6 +117,9 @@ def get_latest_assistant_message(transcript_path):
 
 def main():
     config = load_config()
+
+    if not is_bridge_running():
+        sys.exit(0)
 
     try:
         hook_input = json.load(sys.stdin)

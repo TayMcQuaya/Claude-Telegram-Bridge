@@ -38,6 +38,11 @@ def get_thinking_file():
 def get_last_sent_file():
     return os.path.join(get_bridge_data_dir(), "last_sent_text.txt")
 
+def is_bridge_running():
+    """Check if the bridge is currently running"""
+    bridge_file = os.path.join(get_bridge_data_dir(), "bridge_running.txt")
+    return os.path.exists(bridge_file)
+
 def delete_thinking_message(config):
     """Delete the 'Thinking...' message if it exists"""
     thinking_file = get_thinking_file()
@@ -253,6 +258,9 @@ def get_latest_claude_text(transcript_path):
 
 def main():
     config = load_config()
+
+    if not is_bridge_running():
+        sys.exit(0)
 
     try:
         hook_input = json.load(sys.stdin)
